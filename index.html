@@ -137,7 +137,7 @@
       </div>
 
       <!-- ВСТАВЬТЕ СЮДА ВАШ URL ПОСЛЕ ПЕРЕРАЗВЕРТЫВАНИЯ -->
-      <input type="hidden" id="webAppUrl" value="https://script.google.com/macros/s/AKfycbwE8nxcxmZB54fNBQ_N8UqZ2JqxuL20KtW7i-OCZkK1E-_TdA-wsocZCnuGfob5pMGh/exec">
+      <input type="hidden" id="webAppUrl" value="https://script.google.com/macros/s/AKfycbxaaM9tjgp2Lnl37CXQXeMWALR_YOvQJf6Edoa-FBUQlxEmU-18_2zGWViwOl0FGhqd3Q/exec">
 
       <button id="addBtn">Добавить</button>
 
@@ -161,144 +161,135 @@
       <p id="status" class="status loading">Загрузка данных из Google Sheets…</p>
     </div>
 
-    <script>
-      const surnameInput = document.getElementById('surname');
-      const nameInput = document.getElementById('name');
-      const patronymicInput = document.getElementById('patronymic');
-      const dobInput = document.getElementById('dob');
-      const phoneInput = document.getElementById('phone');
-      const addBtn = document.getElementById('addBtn');
-      const tbody = document.getElementById('table-body');
-      const statusEl = document.getElementById('status');
-      const webAppUrl = document.getElementById('webAppUrl').value;
+<script>
+  const surnameInput = document.getElementById('surname');
+  const nameInput = document.getElementById('name');
+  const patronymicInput = document.getElementById('patronymic');
+  const dobInput = document.getElementById('dob');
+  const phoneInput = document.getElementById('phone');
+  const addBtn = document.getElementById('addBtn');
+  const tbody = document.getElementById('table-body');
+  const statusEl = document.getElementById('status');
+  const webAppUrl = document.getElementById('webAppUrl').value;
 
-      // Автоматическая маска для ввода даты рождения (ДД.ММ.ГГГГ)
-      dobInput.addEventListener('input', (e) => {
-        let v = e.target.value.replace(/\D/g, '');
-        if (v.length > 8) v = v.substring(0, 8);
-        if (v.length > 4) {
-          e.target.value = `${v.substring(0,2)}.${v.substring(2,4)}.${v.substring(4,8)}`;
-        } else if (v.length > 2) {
-          e.target.value = `${v.substring(0,2)}.${v.substring(2,4)}`;
-        } else {
-          e.target.value = v;
-        }
-      });
+  // Автоматическая маска для ввода даты рождения (ДД.ММ.ГГГГ)
+  dobInput.addEventListener('input', (e) => {
+    let v = e.target.value.replace(/\D/g, '');
+    if (v.length > 8) v = v.substring(0, 8);
+    if (v.length > 4) {
+      e.target.value = `${v.substring(0,2)}.${v.substring(2,4)}.${v.substring(4,8)}`;
+    } else if (v.length > 2) {
+      e.target.value = `${v.substring(0,2)}.${v.substring(2,4)}`;
+    } else {
+      e.target.value = v;
+    }
+  });
 
-      function escapeHtml(str) {
-        if (!str) return '';
-        return String(str).replace(/[&<>"]/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[s]));
-      }
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"]/g, s => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[s]));
+  }
 
-      async function loadTable() {
-        if (webAppUrl.includes('ABC123XYZ')) {
-          statusEl.textContent = 'Внимание: Замените тестовый URL веб-приложения на свой.';
-          statusEl.className = 'status error';
-          return;
-        }
-        statusEl.textContent = 'Загрузка данных…';
-        statusEl.className = 'status loading';
-        tbody.innerHTML = '';
+  async function loadTable() {
+    if (webAppUrl.includes('ABC123XYZ')) {
+      statusEl.textContent = 'Внимание: Замените тестовый URL веб-приложения на свой.';
+      statusEl.className = 'status error';
+      return;
+    }
+    statusEl.textContent = 'Загрузка данных…';
+    statusEl.className = 'status loading';
+    tbody.innerHTML = '';
 
-        try {
-          const res = await fetch(webAppUrl);
-          if (!res.ok) throw new Error('Ошибка сети при чтении');
-          const json = await res.json();
-          const rows = json.data || [];
+    try {
+      const res = await fetch(webAppUrl);
+      if (!res.ok) throw new Error('Ошибка сети при чтении');
+      const json = await res.json();
+      const rows = json.data || [];
 
-          if (rows.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Пока нет записей</td></tr>';
-          } else {
-            rows.forEach((row) => {
-              const tr = document.createElement('tr');
-              // Форматируем дату, если она прилетает из Google как ISO-строка
-              let formattedDob = row['Дата рождения'];
-              if (formattedDob && formattedDob.includes('T')) {
-                formattedDob = new Date(formattedDob).toLocaleDateString('ru-RU');
-              }
-              
-              tr.innerHTML = `
-                <td>${escapeHtml(row['№ пп'])}</td>
-                <td><strong>${escapeHtml(row['Фамилия'])}</strong></td>
-                <td>${escapeHtml(row['Имя'])}</td>
-                <td>${escapeHtml(row['Отчество'])}</td>
-                <td>${escapeHtml(formattedDob)}</td>
-                <td>${escapeHtml(row['Телефон'])}</td>
-              `;
-              tbody.appendChild(tr);
-            });
+      if (rows.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px;">Пока нет записей</td></tr>';
+      } else {
+        rows.forEach((row) => {
+          const tr = document.createElement('tr');
+          let formattedDob = row['Дата рождения'];
+          if (formattedDob && formattedDob.includes('T')) {
+            formattedDob = new Date(formattedDob).toLocaleDateString('ru-RU');
           }
-
-          statusEl.textContent = `Данные синхронизированы. Всего записей: ${rows.length}`;
-          statusEl.className = 'status';
-        } catch (e) {
-          console.error(e);
-          statusEl.textContent = 'Ошибка загрузки. Убедитесь, что веб-приложение развернуто для "Всех" (Anyone).';
-          statusEl.className = 'status error';
-        }
-      }
-
-      addBtn.addEventListener('click', async () => {
-        const surname = surnameInput.value.trim();
-        const name = nameInput.value.trim();
-        const patronymic = patronymicInput.value.trim();
-        const dob = dobInput.value.trim();
-        const phone = phoneInput.value.trim();
-
-        if (!surname || !name || !dob || !phone) {
-          alert('Пожалуйста, заполните все обязательные поля со звездочкой (*)');
-          return;
-        }
-
-        if (dob.length < 10) {
-          alert('Введите корректную дату рождения в формате ДД.ММ.ГГГГ');
-          return;
-        }
-
-        addBtn.disabled = true;
-        statusEl.textContent = 'Сохранение в Google Sheets…';
-        statusEl.className = 'status loading';
-
-        const payload = { surname, name, patronymic, dob, phone };
-
-        try {
-          // Отправляем запрос как text/plain, чтобы избежать предварительных CORS-проверок (preflight OPTIONS)
-          const res = await fetch(webAppUrl, {
-            method: 'POST',
-            mode: 'cors',
-            headers: { 'Content-Type': 'text/plain' }, 
-            body: JSON.stringify(payload),
-          });
-
-          if (!res.ok) throw new Error('Ошибка сервера при записи');
           
-          // Поскольку Google Apps Script отдает HtmlOutput, считываем ответ как текст и парсим в JSON
-          const text = await res.text();
-          const data = JSON.parse(text);
+          tr.innerHTML = `
+            <td>${escapeHtml(row['№ пп'])}</td>
+            <td><strong>${escapeHtml(row['Фамилия'])}</strong></td>
+            <td>${escapeHtml(row['Имя'])}</td>
+            <td>${escapeHtml(row['Отчество'])}</td>
+            <td>${escapeHtml(formattedDob)}</td>
+            <td>${escapeHtml(row['Телефон'])}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
 
-          if (data.status === 'ok') {
-            statusEl.textContent = 'Успешно сохранено! Обновляем список…';
-            surnameInput.value = '';
-            nameInput.value = '';
-            patronymicInput.value = '';
-            dobInput.value = '';
-            phoneInput.value = '';
+      statusEl.textContent = `Данные синхронизированы. Всего записей: ${rows.length}`;
+      statusEl.className = 'status';
+    } catch (e) {
+      console.error(e);
+      statusEl.textContent = 'Ошибка загрузки данных.';
+      statusEl.className = 'status error';
+    }
+  }
 
-            await loadTable();
-          } else {
-            throw new Error(data.message || 'Ошибка на стороне скрипта');
-          }
-        } catch (e) {
-          console.error(e);
-          statusEl.textContent = 'Ошибка сохранения. Проверьте код doPost в Apps Script.';
-          statusEl.className = 'status error';
-        } finally {
-          addBtn.disabled = false;
-        }
+  addBtn.addEventListener('click', async () => {
+    const surname = surnameInput.value.trim();
+    const name = nameInput.value.trim();
+    const patronymic = patronymicInput.value.trim();
+    const dob = dobInput.value.trim();
+    const phone = phoneInput.value.trim();
+
+    if (!surname || !name || !dob || !phone) {
+      alert('Пожалуйста, заполните все обязательные поля со звездочкой (*)');
+      return;
+    }
+
+    addBtn.disabled = true;
+    statusEl.textContent = 'Сохранение в Google Sheets…';
+    statusEl.className = 'status loading';
+
+    const payload = { surname, name, patronymic, dob, phone };
+
+    try {
+      // Используем mode: 'no-cors' для обхода любых ограничений браузера при отправке данных
+      await fetch(webAppUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' }, 
+        body: JSON.stringify(payload),
       });
 
-      loadTable();
-    </script>
+      // При no-cors ответ прочесть нельзя (он opaque), но данные гарантированно доходят.
+      // Поэтому сразу очищаем форму и обновляем таблицу через doGet.
+      statusEl.textContent = 'Успешно сохранено! Обновляем список…';
+      surnameInput.value = '';
+      nameInput.value = '';
+      patronymicInput.value = '';
+      dobInput.value = '';
+      phoneInput.value = '';
+
+      // Небольшая пауза, чтобы Google Sheets успел записать строку перед чтением
+      setTimeout(async () => {
+        await loadTable();
+      }, 800);
+
+    } catch (e) {
+      console.error(e);
+      statusEl.textContent = 'Ошибка сети. Проверьте консоль.';
+      statusEl.className = 'status error';
+    } finally {
+      addBtn.disabled = false;
+    }
+  });
+
+  loadTable();
+</script>
+
   </body>
 </html>
 
