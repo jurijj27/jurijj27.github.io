@@ -253,34 +253,42 @@
     statusEl.textContent = 'Сохранение в Google Sheets…';
     statusEl.className = 'status loading';
 
-    const payload = { surname, name, patronymic, dob, phone };
+    // Формируем параметры строки для GET-запроса
+    const params = new URLSearchParams({
+      action: 'add',
+      surname: surname,
+      name: name,
+      patronymic: patronymic,
+      dob: dob,
+      phone: phone
+    });
 
     try {
-      // Используем mode: 'no-cors' для обхода любых ограничений браузера при отправке данных
-      await fetch(webAppUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' }, 
-        body: JSON.stringify(payload),
-      });
+      // Отправляем как GET-запрос — это полностью решает проблему CORS
+      const res = await fetch(`${webAppUrl}?${params.toString()}`);
+      if (!res.ok) throw new Error('Ошибка сервера при записи');
+      
+      const data = await res.json();
 
-      // При no-cors ответ прочесть нельзя (он opaque), но данные гарантированно доходят.
-      // Поэтому сразу очищаем форму и обновляем таблицу через doGet.
-      statusEl.textContent = 'Успешно сохранено! Обновляем список…';
-      surnameInput.value = '';
-      nameInput.value = '';
-      patronymicInput.value = '';
-      dobInput.value = '';
-      phoneInput.value = '';
+      if (data.status === 'ok') {
+        statusEl.textContent = 'Успешно сохранено! Обновляем список…';
+        
+        // Очищаем поля формы
+        surnameInput.value = '';
+        nameInput.value = '';
+        patronymicInput.value = '';
+        dobInput.value = '';
+        phoneInput.value = '';
 
-      // Небольшая пауза, чтобы Google Sheets успел записать строку перед чтением
-      setTimeout(async () => {
+        // Перезагружаем таблицу
         await loadTable();
-      }, 800);
+      } else {
+        throw new Error(data.message || 'Ошибка скрипта Google');
+      }
 
     } catch (e) {
-      console.error(e);
-      statusEl.textContent = 'Ошибка сети. Проверьте консоль.';
+      console.error('Ошибка fetch:', e);
+      statusEl.textContent = 'Ошибка сохранения. Убедитесь, что опубликовали НОВУЮ версию скрипта.';
       statusEl.className = 'status error';
     } finally {
       addBtn.disabled = false;
@@ -289,6 +297,7 @@
 
   loadTable();
 </script>
+
 
   </body>
 </html>
