@@ -1,0 +1,12 @@
+{
+  "name": "AXIOM IQ — лаборатория мышления",
+  "short_name": "AXIOM IQ",
+  "description": "Тренажёр логики, памяти, внимания и аналитического мышления",
+  "lang": "ru",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080d16",
+  "theme_color": "#080d16",
+  "icons": [{"src":"./favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]
+}

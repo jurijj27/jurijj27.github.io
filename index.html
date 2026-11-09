@@ -1,235 +1,61 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Хаотичный Мороз</title>
-<style>
-    body, html {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #000;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        overflow: hidden;
-    }
-
-    .image-container {
-        position: relative;
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        overflow: hidden;
-        /* Центр смещен к лицу девушки */
-        --mask-center: 70% 50%; 
-    }
-
-    .target-image {
-        height: 100%;
-        width: auto;
-        max-width: 100%;
-        object-fit: cover;
-        object-position: right center;
-    }
-
-    /* 1. Ледяное искажение (волны) */
-    .distortion-layer {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background-image: url('ВАША_КАРТИНКА.jpg');
-        background-size: cover;
-        background-position: right center;
-        filter: url(#ice-filter) brightness(1.1) contrast(1.1);
-        
-        -webkit-mask-image: radial-gradient(ellipse at var(--mask-center), 
-            transparent calc(10% + (var(--intensity) * 60%)), 
-            black calc(50% + (var(--intensity) * 40%)));
-        mask-image: radial-gradient(ellipse at var(--mask-center), 
-            transparent calc(10% + (var(--intensity) * 60%)), 
-            black calc(50% + (var(--intensity) * 40%)));
-            
-        opacity: var(--intensity);
-    }
-
-    /* 2. Слой запотевания */
-    .fog-layer {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        backdrop-filter: blur(calc(var(--intensity) * 5px));
-        -webkit-mask-image: radial-gradient(ellipse at var(--mask-center), 
-            transparent calc(10% + (var(--intensity) * 80%)), 
-            black calc(70% + (var(--intensity) * 30%)));
-        mask-image: radial-gradient(ellipse at var(--mask-center), 
-            transparent calc(10% + (var(--intensity) * 80%)), 
-            black calc(70% + (var(--intensity) * 30%)));
-    }
-
-    /* --- СЛОИ СНЕЖИНОК --- */
-    .snow-layers {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        opacity: var(--intensity);
-        -webkit-mask-image: radial-gradient(ellipse at var(--mask-center), 
-            transparent calc(10% + (var(--intensity) * 75%)), 
-            black calc(60% + (var(--intensity) * 40%)));
-        mask-image: radial-gradient(ellipse at var(--mask-center), 
-            transparent calc(10% + (var(--intensity) * 75%)), 
-            black calc(60% + (var(--intensity) * 40%)));
-    }
-
-    /* Слой 1: Крупные снежинки (медленно плывут) */
-    .snow-large {
-        position: absolute;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg stroke='%23ffffff' fill='none' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg transform='translate(100, 100) rotate(15)'%3E%3Cpath d='M0,-40 L0,40 M-34.6,-20 L34.6,20 M-34.6,20 L34.6,-20'/%3E%3Cpath d='M0,-25 L-10,-35 M0,-25 L10,-35 M0,-12 L-7,-19 M0,-12 L7,-19'/%3E%3Cpath d='M-21.6,12.5 L-32.5,2.5 M-21.6,12.5 L-32.5,22.5'/%3E%3Ccircle cx='0' cy='0' r='5'/%3E%3C/g%3E%3Cg transform='translate(300, 250) rotate(45) scale(0.7)'%3E%3Cpath d='M0,-40 L0,40 M-34.6,-20 L34.6,20 M-34.6,20 L34.6,-20'/%3E%3Cpath d='M0,-25 L-10,-35 M0,-25 L10,-35 M0,-12 L-7,-19 M0,-12 L7,-19'/%3E%3Ccircle cx='0' cy='0' r='5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        background-size: 500px 500px;
-        animation: drift-large 30s infinite linear alternate;
-        filter: drop-shadow(0 0 12px rgba(160, 210, 255, 0.9));
-    }
-
-    /* Слой 2: Средние снежинки (движутся в другую сторону) */
-    .snow-medium {
-        position: absolute;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cg stroke='%23d0e5ff' fill='none' stroke-width='2'%3E%3Cg transform='translate(80, 80) rotate(75)'%3E%3Cpath d='M0,-30 L0,30 M-26,-15 L26,15 M-26,15 L26,-15'/%3E%3Cpath d='M0,-18 L-6,-24 M0,-18 L6,-24'/%3E%3C/g%3E%3Cg transform='translate(200, 180) rotate(10)'%3E%3Cpath d='M0,-30 L0,30 M-26,-15 L26,15 M-26,15 L26,-15'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        background-size: 350px 350px;
-        animation: drift-medium 20s infinite linear alternate-reverse;
-        filter: drop-shadow(0 0 8px rgba(200, 230, 255, 0.7));
-    }
-
-    /* Слой 3: Мелкая крошка и пыль (создает хаос) */
-    .snow-dust {
-        position: absolute;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='20' cy='30' r='1.5'/%3E%3Ccircle cx='80' cy='20' r='2'/%3E%3Ccircle cx='120' cy='90' r='1'/%3E%3Ccircle cx='40' cy='110' r='1.5'/%3E%3Ccircle cx='100' cy='140' r='2.5'/%3E%3Ccircle cx='10' cy='80' r='1'/%3E%3Cpath d='M60,60 L62,65 L58,65 Z'/%3E%3Cpath d='M130,40 L132,45 L128,45 Z'/%3E%3C/g%3E%3C/svg%3E");
-        background-size: 200px 200px;
-        animation: drift-dust 15s infinite linear;
-        opacity: 0.8;
-    }
-
-    /* Анимации для создания хаотичного движения */
-    @keyframes drift-large {
-        0% { background-position: 0px 0px; transform: rotate(0deg); }
-        100% { background-position: 150px 150px; transform: rotate(5deg); }
-    }
-    @keyframes drift-medium {
-        0% { background-position: 0px 0px; }
-        100% { background-position: -100px 200px; }
-    }
-    @keyframes drift-dust {
-        0% { background-position: 0px 0px; }
-        100% { background-position: 50px 100px; }
-    }
-
-    /* --- ИНТЕРФЕЙС --- */
-    .controls {
-        position: absolute;
-        left: 5%;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 10;
-        color: #fff;
-        width: 300px;
-    }
-
-    .controls h1 {
-        font-size: 2.5rem;
-        font-weight: 300;
-        margin: 0 0 10px 0;
-        letter-spacing: 5px;
-        color: #e6f0ff;
-        text-transform: uppercase;
-        text-shadow: 0 0 20px rgba(150, 200, 255, 0.8);
-    }
-
-    .controls p {
-        font-size: 0.9rem;
-        color: #888;
-        margin: 0 0 25px 0;
-        letter-spacing: 1px;
-    }
-
-    input[type=range] {
-        -webkit-appearance: none;
-        width: 100%;
-        background: transparent;
-    }
-
-    input[type=range]:focus {
-        outline: none;
-    }
-
-    input[type=range]::-webkit-slider-runnable-track {
-        width: 100%;
-        height: 2px;
-        cursor: pointer;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 1px;
-    }
-
-    input[type=range]::-webkit-slider-thumb {
-        height: 16px;
-        width: 16px;
-        border-radius: 50%;
-        background: #fff;
-        cursor: pointer;
-        -webkit-appearance: none;
-        margin-top: -7px;
-        box-shadow: 0 0 15px rgba(160, 210, 255, 0.9);
-        transition: transform 0.1s, background 0.2s;
-    }
-
-    input[type=range]::-webkit-slider-thumb:hover {
-        transform: scale(1.3);
-        background: #a0c4ff;
-    }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#080d16" />
+  <meta name="description" content="AXIOM IQ — интерактивная лаборатория мышления. Задачи на логику, матрицы, память, внимание и пространственное мышление." />
+  <meta property="og:title" content="AXIOM IQ — лаборатория мышления" />
+  <meta property="og:description" content="Семь направлений, адаптивные задания, испытания и личная статистика. Без регистрации." />
+  <title>AXIOM IQ — лаборатория мышления</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <script src="app.js" defer></script>
+  <script>if ("serviceWorker" in navigator && location.protocol !== "file:") { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {})); }</script>
 </head>
 <body>
-
-<div class="image-container" id="container">
-    <img class="target-image" src="мороз.jpg" alt="Anime Girl">
-    
-    <div class="distortion-layer"></div>
-    <div class="fog-layer"></div>
-    
-    <!-- Контейнер для всех слоев снега -->
-    <div class="snow-layers">
-        <div class="snow-large"></div>
-        <div class="snow-medium"></div>
-        <div class="snow-dust"></div>
+  <div class="app-shell" id="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Основное меню">
+      <a class="brand" href="#home" aria-label="AXIOM IQ — главная">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+        <span class="brand-text"><strong>AXIOM<span class="brand-dot">.</span></strong><small>IQ LABORATORY</small></span>
+      </a>
+      <div class="sidebar-rule"></div>
+      <span class="nav-caption">РАБОЧЕЕ ПРОСТРАНСТВО</span>
+      <nav class="navigation" id="main-nav">
+        <button class="nav-link active" data-route="home" type="button"><span class="nav-icon" data-icon="layout"></span><span>Обзор</span></button>
+        <button class="nav-link" data-route="challenges" type="button"><span class="nav-icon" data-icon="zap"></span><span>Испытания</span></button>
+        <button class="nav-link" data-route="library" type="button"><span class="nav-icon" data-icon="grid"></span><span>Библиотека задач</span></button>
+        <button class="nav-link" data-route="stats" type="button"><span class="nav-icon" data-icon="chart"></span><span>Моя статистика</span></button>
+      </nav>
+      <span class="nav-caption nav-caption-more">НАСТРОЙКИ</span>
+      <nav class="navigation">
+        <button class="nav-link" data-route="about" type="button"><span class="nav-icon" data-icon="info"></span><span>О лаборатории</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-insight"><span class="sidebar-insight-icon">✦</span><span><strong>Мышление — навык.</strong><br/>Каждая задача делает его точнее.</span></div>
+        <div class="sidebar-user"><div class="avatar" id="sidebar-avatar">IQ</div><div class="user-details"><strong id="sidebar-username">Исследователь</strong><small>Локальный профиль</small></div><span class="status-dot" title="Сохраняется на этом устройстве"></span></div>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <div class="main-wrap">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-button mobile-menu" id="menu-toggle" aria-label="Открыть меню" type="button"><span data-icon="menu"></span></button>
+          <div class="breadcrumb"><span>ЛАБОРАТОРИЯ</span><span class="breadcrumb-separator">/</span><span id="breadcrumb-current">ОБЗОР</span></div>
+        </div>
+        <div class="topbar-right">
+          <span class="online-pill"><span class="live-dot"></span> АВТОНОМНЫЙ РЕЖИМ</span>
+          <button class="icon-button" id="theme-toggle" type="button" aria-label="Переключить тему" title="Сменить тему"><span data-icon="sun"></span></button>
+          <button class="profile-button" id="profile-button" type="button" aria-label="Настроить профиль"><span data-icon="user"></span></button>
+        </div>
+      </header>
+      <main id="main" class="content" tabindex="-1" aria-live="polite"></main>
+      <footer class="footer"><span>© <span id="copyright-year">2026</span> AXIOM IQ <span class="footer-divider">/</span> ТРЕНИРУЙ МЫШЛЕНИЕ</span><span>100% локально · Без регистрации · v1.0</span></footer>
     </div>
-</div>
-
-<div class="controls">
-    <h1>Frost</h1>
-    <p>Потяните ползунок, чтобы вызвать метель</p>
-    <input type="range" id="frostSlider" min="0" max="1" step="0.01" value="0">
-</div>
-
-<svg style="position: absolute; width: 0; height: 0;">
-    <defs>
-        <filter id="ice-filter" x="-20%" y="-20%" width="140%" height="140%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="4" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="25" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-    </defs>
-</svg>
-
-<script>
-    const slider = document.getElementById('frostSlider');
-    const container = document.getElementById('container');
-
-    slider.addEventListener('input', (e) => {
-        container.style.setProperty('--intensity', e.target.value);
-    });
-</script>
-
+  </div>
+  <div class="modal-layer" id="modal-layer" aria-hidden="true"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
