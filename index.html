@@ -1,44 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru" data-theme="mint">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEURO QUEST — космическая IQ-лаборатория</title>
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="theme-color" content="#0a1420"/>
+  <title>NEURO QUEST — космическая IQ-лаборатория</title>
+  <meta name="description" content="Космическая IQ-лаборатория для детей и взрослых: тесты, боссы, дуэли, планеты знаний."/>
+  <link rel="manifest" href="manifest.webmanifest"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>"/>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-<div class="blob blob-a"></div>
-<div class="blob blob-b"></div>
+  <div class="blob blob-a"></div>
+  <div class="blob blob-b"></div>
 
-<header class="topbar">
-  <div class="logo" id="logoBtn" title="На главную">
-    <span class="logo-face">🧠</span>
-    <span class="logo-text">NEURO<em>QUEST</em></span>
+  <header class="topbar">
+    <button class="logo" id="logoBtn" title="На главную">
+      <span class="logo-face">🧠</span>
+      <span class="logo-text">NEURO <em>QUEST</em></span>
+    </button>
+    <div class="topbar-actions">
+      <button class="xp-chip" id="xpChip" title="Профиль и аватар">
+        <span id="xpAvatar">🚀</span>
+        <span class="xp-info">
+          <span id="xpLevel">Стажёр мозга</span>
+          <span class="xp-bar"><span class="xp-fill" id="xpFill"></span></span>
+        </span>
+      </button>
+      <button class="chip-btn" id="achBtn" title="Достижения">🏅</button>
+      <button class="chip-btn" id="themeBtn" title="Скины">🎨</button>
+      <button class="chip-btn" id="soundBtn" title="Звук">🔊</button>
+    </div>
+  </header>
+
+  <div class="theme-tray" id="themeTray" hidden></div>
+
+  <main id="app"></main>
+
+  <div class="pet" id="pet" title="БИП-9">
+    <div class="pet-bubble" id="petBubble"></div>
+    <div class="pet-face">🤖</div>
   </div>
-  <div class="topbar-actions">
-    <button class="chip-btn" id="soundBtn" title="Звук вкл/выкл">🔊</button>
-    <button class="chip-btn" id="themeBtn" title="Сменить скин">🎨 Скин</button>
-  </div>
-</header>
 
-<div class="theme-tray" id="themeTray" hidden></div>
+  <div class="toasts" id="toasts"></div>
+  <canvas id="confetti"></canvas>
 
-<main id="app"></main>
+  <div class="modal-overlay" id="modalOverlay" hidden><div class="modal" id="modalBox"></div></div>
 
-<footer class="foot">
-  <span>NEURO QUEST · играем и думаем</span>
-  <span class="dot">·</span>
-  <span>всё локально · без регистрации</span>
-</footer>
-
-<canvas id="fx"></canvas>
-<script src="app.js"></script>
-<script>
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
-</script>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -1,9 +1,10 @@
 {
-  "name": "NEURO QUEST — IQ-лаборатория",
+  "name": "NEURO QUEST — космическая IQ-лаборатория",
   "short_name": "NEURO QUEST",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0a1420",
-  "theme_color": "#3ddc97",
-  "icons": []
+  "theme_color": "#0a1420",
+  "lang": "ru",
+  "description": "Космическая IQ-лаборатория: тесты, боссы, дуэли, планеты знаний."
 }
