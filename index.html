@@ -1,61 +1,44 @@
-<!doctype html>
-<html lang="ru">
+<!DOCTYPE html>
+<html lang="ru" data-theme="mint">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#080d16" />
-  <meta name="description" content="AXIOM IQ — интерактивная лаборатория мышления. Задачи на логику, матрицы, память, внимание и пространственное мышление." />
-  <meta property="og:title" content="AXIOM IQ — лаборатория мышления" />
-  <meta property="og:description" content="Семь направлений, адаптивные задания, испытания и личная статистика. Без регистрации." />
-  <title>AXIOM IQ — лаборатория мышления</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="manifest" href="manifest.webmanifest" />
-  <script src="app.js" defer></script>
-  <script>if ("serviceWorker" in navigator && location.protocol !== "file:") { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {})); }</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEURO QUEST — космическая IQ-лаборатория</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="app-shell" id="app-shell">
-    <aside class="sidebar" id="sidebar" aria-label="Основное меню">
-      <a class="brand" href="#home" aria-label="AXIOM IQ — главная">
-        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
-        <span class="brand-text"><strong>AXIOM<span class="brand-dot">.</span></strong><small>IQ LABORATORY</small></span>
-      </a>
-      <div class="sidebar-rule"></div>
-      <span class="nav-caption">РАБОЧЕЕ ПРОСТРАНСТВО</span>
-      <nav class="navigation" id="main-nav">
-        <button class="nav-link active" data-route="home" type="button"><span class="nav-icon" data-icon="layout"></span><span>Обзор</span></button>
-        <button class="nav-link" data-route="challenges" type="button"><span class="nav-icon" data-icon="zap"></span><span>Испытания</span></button>
-        <button class="nav-link" data-route="library" type="button"><span class="nav-icon" data-icon="grid"></span><span>Библиотека задач</span></button>
-        <button class="nav-link" data-route="stats" type="button"><span class="nav-icon" data-icon="chart"></span><span>Моя статистика</span></button>
-      </nav>
-      <span class="nav-caption nav-caption-more">НАСТРОЙКИ</span>
-      <nav class="navigation">
-        <button class="nav-link" data-route="about" type="button"><span class="nav-icon" data-icon="info"></span><span>О лаборатории</span></button>
-      </nav>
-      <div class="sidebar-bottom">
-        <div class="sidebar-insight"><span class="sidebar-insight-icon">✦</span><span><strong>Мышление — навык.</strong><br/>Каждая задача делает его точнее.</span></div>
-        <div class="sidebar-user"><div class="avatar" id="sidebar-avatar">IQ</div><div class="user-details"><strong id="sidebar-username">Исследователь</strong><small>Локальный профиль</small></div><span class="status-dot" title="Сохраняется на этом устройстве"></span></div>
-      </div>
-    </aside>
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
-    <div class="main-wrap">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="icon-button mobile-menu" id="menu-toggle" aria-label="Открыть меню" type="button"><span data-icon="menu"></span></button>
-          <div class="breadcrumb"><span>ЛАБОРАТОРИЯ</span><span class="breadcrumb-separator">/</span><span id="breadcrumb-current">ОБЗОР</span></div>
-        </div>
-        <div class="topbar-right">
-          <span class="online-pill"><span class="live-dot"></span> АВТОНОМНЫЙ РЕЖИМ</span>
-          <button class="icon-button" id="theme-toggle" type="button" aria-label="Переключить тему" title="Сменить тему"><span data-icon="sun"></span></button>
-          <button class="profile-button" id="profile-button" type="button" aria-label="Настроить профиль"><span data-icon="user"></span></button>
-        </div>
-      </header>
-      <main id="main" class="content" tabindex="-1" aria-live="polite"></main>
-      <footer class="footer"><span>© <span id="copyright-year">2026</span> AXIOM IQ <span class="footer-divider">/</span> ТРЕНИРУЙ МЫШЛЕНИЕ</span><span>100% локально · Без регистрации · v1.0</span></footer>
-    </div>
+<div class="blob blob-a"></div>
+<div class="blob blob-b"></div>
+
+<header class="topbar">
+  <div class="logo" id="logoBtn" title="На главную">
+    <span class="logo-face">🧠</span>
+    <span class="logo-text">NEURO<em>QUEST</em></span>
   </div>
-  <div class="modal-layer" id="modal-layer" aria-hidden="true"></div>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="topbar-actions">
+    <button class="chip-btn" id="soundBtn" title="Звук вкл/выкл">🔊</button>
+    <button class="chip-btn" id="themeBtn" title="Сменить скин">🎨 Скин</button>
+  </div>
+</header>
+
+<div class="theme-tray" id="themeTray" hidden></div>
+
+<main id="app"></main>
+
+<footer class="foot">
+  <span>NEURO QUEST · играем и думаем</span>
+  <span class="dot">·</span>
+  <span>всё локально · без регистрации</span>
+</footer>
+
+<canvas id="fx"></canvas>
+<script src="app.js"></script>
+<script>
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+</script>
 </body>
 </html>
