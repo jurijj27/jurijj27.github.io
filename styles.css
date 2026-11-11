@@ -294,10 +294,186 @@ body{
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:70}
 
 @media (max-width:640px){
+  /* Шапка: компактнее, не расползается */
+  .topbar{padding:10px 12px;gap:8px}
+  .logo-face{font-size:24px}
+  .logo-text{font-size:17px;letter-spacing:.5px}
+  .topbar-actions{gap:6px}
+  .chip-btn{padding:9px 10px;min-height:40px;font-size:14px}
+  .xp-chip{padding:5px 10px;gap:7px}
+  .xp-info{min-width:64px}
   #xpLevel{display:none}
+
+  /* Трей скинов: на всю ширину, а не прижат к краю */
+  .theme-tray{left:12px;right:12px;top:64px;min-width:0}
+
+  /* Викторина */
   .q-timer{margin-left:0}
-  .toast{white-space:normal;text-align:center}
+  .q-card{padding:18px}
+  .q-text{font-size:20px}
+  .opts{grid-template-columns:1fr;gap:8px}
+  .opt{padding:14px;min-height:48px}
+  .bar-row{grid-template-columns:minmax(90px,130px) 1fr auto;font-size:12px}
+
+  /* Итоги: циферблат поменьше */
+  .gauge{width:150px;height:150px}
+  .gauge-inner{width:118px;height:118px}
+  .gauge-num{font-size:36px}
+  .result-actions{flex-direction:column;align-items:stretch}
+
+  /* Кнопки: тап-зоны от 44px и отклик на нажатие */
+  .btn{padding:14px 20px;min-height:44px}
+  .btn:active,.chip-btn:active,.opt:active,.mode:active,.planet-card:active{transform:scale(.97)}
+
+  /* Модалки */
+  .modal{padding:20px;width:calc(100% - 24px);max-height:85dvh}
+
+  /* Питомец и тосты: не перекрывают контент, уважают «чёлку» */
+  .pet{left:12px;bottom:calc(12px + env(safe-area-inset-bottom))}
+  .pet-face{font-size:32px}
+  .pet-bubble{max-width:min(220px,calc(100vw - 90px))}
+  .toasts{top:calc(68px + env(safe-area-inset-top))}
+  .toast{font-size:13px;max-width:calc(100vw - 32px);white-space:normal;text-align:center}
+
+  /* Общее */
+  #app{padding:16px 14px 110px}
+  .hero h1{font-size:clamp(30px,9vw,44px)}
+  .hero .planet{font-size:52px}
+  .h2{font-size:20px;margin:28px 0 12px}
+  /* iOS не зумит поля ввода, если шрифт от 16px */
+  .name-row input,.duel-names input{font-size:16px}
+  /* Размытые блобы дороги на телефонах — облегчаем */
+  .blob{filter:blur(60px);opacity:.35}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* ============================================================
+   NEURO QUEST 2.1 — СУПЕР-ПОЛИРОВКА
+   Глубина фона, стекло, свечения, микродвижения.
+   Всё на твоих же переменных — 6 скинов красятся автоматически.
+   ============================================================ */
+:root{
+  --glass:color-mix(in srgb, var(--card) 72%, transparent);
+  --edge:color-mix(in srgb, var(--ink) 14%, transparent);
+}
+
+/* --- Фон: туманности по углам + звёздное небо --- */
+body{
+  background:
+    radial-gradient(1100px 700px at 85% -5%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 62%),
+    radial-gradient(900px 650px at -8% 108%, color-mix(in srgb, var(--accent2) 14%, transparent), transparent 62%),
+    linear-gradient(160deg, var(--bg) 0%, var(--bg2) 100%);
+}
+body::before{
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.55;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 22%, color-mix(in srgb, var(--ink) 45%, transparent) 50%, transparent 51%),
+    radial-gradient(1px 1px at 68% 12%,  color-mix(in srgb, var(--ink) 35%, transparent) 50%, transparent 51%),
+    radial-gradient(2px 2px at 84% 42%,  color-mix(in srgb, var(--ink) 30%, transparent) 50%, transparent 51%),
+    radial-gradient(1px 1px at 30% 78%,  color-mix(in srgb, var(--ink) 40%, transparent) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 55% 60%, color-mix(in srgb, var(--ink) 25%, transparent) 50%, transparent 51%);
+  background-size:520px 520px;
+}
+
+/* --- Шапка: плотнее стекло, лого с градиентом --- */
+.topbar{background:var(--glass);box-shadow:0 12px 40px rgba(0,0,0,.22)}
+.logo-text em{
+  background:linear-gradient(92deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.chip-btn{background:var(--glass);backdrop-filter:blur(8px)}
+.xp-chip{background:var(--glass);backdrop-filter:blur(8px)}
+
+/* --- Карточки режимов: иконка в плитке + светящийся ободок --- */
+.mode{background:linear-gradient(180deg, var(--card), var(--card2));border-color:var(--edge)}
+.mode-emoji{
+  width:58px;height:58px;display:grid;place-items:center;border-radius:18px;font-size:30px;
+  background:var(--accent-soft);box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
+  transition:transform .25s;
+}
+.mode:hover .mode-emoji{transform:scale(1.12) rotate(-6deg)}
+.mode::after{
+  content:'';position:absolute;inset:0;border-radius:var(--r);padding:2px;opacity:0;transition:.25s;
+  background:linear-gradient(135deg,var(--accent),var(--accent2) 55%,transparent);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none;
+}
+.mode:hover::after{opacity:1}
+
+/* --- Планеты: орбитальное кольцо --- */
+.planet-card{position:relative;overflow:hidden}
+.planet-card::after{
+  content:'';position:absolute;width:120px;height:120px;border-radius:50%;
+  border:1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  left:50%;top:24%;translate:-50% -50%;transition:.4s;pointer-events:none;
+}
+.planet-card:hover::after{width:170px;height:170px;border-color:var(--accent);opacity:.7}
+
+/* --- Статистика: цифры светятся --- */
+.stat{background:linear-gradient(180deg, var(--card), var(--card2))}
+.stat b{text-shadow:0 0 18px var(--accent-soft)}
+
+/* --- Достижения: разблокированные блестят --- */
+.ach-badge.got{animation:badgeShine 3s ease-in-out infinite}
+@keyframes badgeShine{
+  0%,100%{box-shadow:0 6px 18px var(--accent-soft)}
+  50%{box-shadow:0 6px 26px color-mix(in srgb, var(--accent) 45%, transparent)}
+}
+
+/* --- Викторина: карточка с градиентной шапкой --- */
+.q-card{position:relative;overflow:hidden;background:linear-gradient(180deg, var(--card), var(--card2))}
+.q-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));
+}
+.q-card.boss::before{background:linear-gradient(90deg,var(--accent3),#ff9f43,var(--accent3))}
+.opt b{
+  background:linear-gradient(135deg,var(--accent-soft),color-mix(in srgb, var(--accent2) 18%, transparent));
+  font-family:var(--disp);
+}
+.opt.correct{box-shadow:0 6px 22px color-mix(in srgb, var(--good) 30%, transparent)}
+.opt.wrong{box-shadow:0 6px 22px color-mix(in srgb, var(--bad) 25%, transparent)}
+
+/* --- Кнопки: главная с бликом --- */
+.btn{position:relative;overflow:hidden}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
+  box-shadow:0 8px 24px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.btn-primary::after{
+  content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);
+  transform:skewX(-18deg);animation:btnShine 3.4s ease-in-out infinite;
+}
+@keyframes btnShine{0%,60%{left:-80%}100%{left:130%}}
+.btn-warn{box-shadow:0 8px 24px color-mix(in srgb, var(--accent3) 35%, transparent)}
+
+/* --- Циферблат IQ: градиентный + свечение --- */
+.gauge{
+  background:conic-gradient(from -90deg,
+    var(--accent) calc(var(--p,0)*1%),
+    var(--accent2) calc(var(--p,0)*1%),
+    color-mix(in srgb, var(--ink) 10%, transparent) 0);
+  box-shadow:0 0 50px var(--accent-soft), inset 0 0 24px rgba(0,0,0,.15);
+}
+
+/* --- Модалки и тосты: стекло --- */
+.modal{background:var(--glass);backdrop-filter:blur(16px)}
+.toast{background:var(--glass);backdrop-filter:blur(10px);border-radius:16px}
+
+/* --- Питомец: пузырь со свечением --- */
+.pet-bubble{box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.pet-face{filter:drop-shadow(0 0 14px var(--accent-soft))}
+
+/* --- Радужный скин: пусть сияет по полной --- */
+[data-theme="rainbow"] .topbar{
+  border-bottom:2px solid;
+  border-image:linear-gradient(90deg,#ff5d8f,#ffd166,#3ddc97,#38bdf8) 1;
+}
+
+/* --- Уважение к настройке «меньше движения» --- */
+@media (prefers-reduced-motion:reduce){
+  .btn-primary::after,.ach-badge.got{animation:none!important}
 }
